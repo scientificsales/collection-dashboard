@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Collection Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-900 min-h-screen flex flex-col items-center p-6">
+  <h1 class="text-3xl font-bold mb-2">Collection Dashboard</h1>
+
+  {% if result %}
+    <p class="text-sm text-gray-600 mb-4">
+      Showing data from sheet: <strong>{{ result.sheet }}</strong>
+    </p>
+  {% endif %}
+
+  <form method="POST" class="w-full max-w-md bg-white p-4 rounded-xl shadow-md mb-6">
+    <label class="block text-sm font-semibold mb-2">Enter Customer Name:</label>
+    <input name="customer" class="w-full p-2 border border-gray-300 rounded mb-4" placeholder="e.g., Synzeal" />
+    <div class="flex justify-between">
+      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Search</button>
+      <button name="sort_by" value="difference" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">Sort by Difference</button>
+    </div>
+  </form>
+
+  {% if result %}
+    {% if result.rows %}
+      <div class="bg-white p-6 rounded-xl shadow-lg w-full max-w-6xl">
+        <h2 class="text-xl font-bold mb-4">{{ result.customer }}</h2>
+        <div class="grid grid-cols-3 gap-4 text-center mb-6">
+          <div><strong>Expected</strong><br>{{ result.expected }}</div>
+          <div><strong>Received</strong><br>{{ result.received }}</div>
+          <div><strong>Pending</strong><br>{{ result.pending }}</div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-t table-auto whitespace-nowrap">
+            <thead>
+              <tr>
+                {% for col in result.rows[0].keys() %}
+                  <th class="border-b py-2 px-3 font-semibold text-sm">{{ col }}</th>
+                {% endfor %}
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in result.rows %}
+                <tr class="border-t">
+                  {% for val in row.values() %}
+                    <td class="py-2 px-3 border-b">{{ val }}</td>
+                  {% endfor %}
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    {% else %}
+      <p class="text-red-600 text-center">No data found for this customer.</p>
+    {% endif %}
+  {% endif %}
+</body>
+</html>
